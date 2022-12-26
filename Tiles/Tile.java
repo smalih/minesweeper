@@ -4,18 +4,27 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Tile extends JButton {
-    public String type;
+    public enum Type {
+        EMPTY,
+        MINE,
+        NUMTILE
+    }
 
-    boolean pressed = false;
+    public Type type;
+//    public String type;
+    public Point location;
+    public boolean revealed = false;
 
     public Tile () {
+        type = Type.EMPTY;
         this.setPreferredSize(new Dimension(25, 25));
     }
 
     public void buttonPressed() {
-        this.setOpaque(true);
-        this.setBackground(Color.lightGray);
-//        this.setForeground(Color.blue);
-        this.setBorderPainted(false);
+        revealed = true;
+        setOpaque(true);
+        setBackground(Color.lightGray);
+        setBorderPainted(false);
+        setEnabled(false);
     }
 }

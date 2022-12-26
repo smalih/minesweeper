@@ -8,9 +8,15 @@ public class NumTile extends Tile {
 //        type = "mine";
 //    }
 
+
     public NumTile (int number) {
+//        type = "numtile";
+        type = Type.NUMTILE;
         this.number = number;
     }
+//    public String type = "numtile";
+
+//    Type type = Type.NUMTILE;
 
     private void incrementNumber() {
         this.number++;
@@ -21,6 +27,8 @@ public class NumTile extends Tile {
     }
 
     public void buttonPressed() {
-        this.setText(Integer.toString(number));
+        revealed = true;
+        setText(Integer.toString(number));
+        setEnabled(false);
     }
 }

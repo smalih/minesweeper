@@ -12,18 +12,20 @@ public class MyFrame extends JFrame {
 
     MyFrame() {
 
-        for (int i = 0; i < 100; i++) {
+        // randomly place mines in grid
+        for (int i = 0; i < 80; i++) {
 
             int randx;
             int randy;
             do {
                 randx = (int) (Math.random() * x);
                 randy = (int) (Math.random() * y);
-            } while(Gameboard[randy][randx] != null);
-            System.out.println("Moving this around");
+            } while(Gameboard[randy][randx] != null); // check that tile is not already mine
             Gameboard[randy][randx] = new Mine();
+            Gameboard[randy][randx].location = new Point(randx, randy);
         }
 
+        // fill remaining tiles as numtiles/empties
         for (int j = 0; j < y; j++) {
             for (int i = 0; i < x; i++) {
                 if (!(Gameboard[j][i] instanceof Mine)) {
@@ -44,12 +46,15 @@ public class MyFrame extends JFrame {
                             }
                         }
                     }
+
+                    // if at least one adj mine, tile is numtile
                     if (adjMines > 0) {
                         Gameboard[j][i] = new NumTile(adjMines);
                     }
-                    else {
+                    else { // else, tile is empty tile
                         Gameboard[j][i] = new Tile();
                     }
+                    Gameboard[j][i].location = new Point(i, j);
 
                 }
             }
@@ -66,14 +71,16 @@ public class MyFrame extends JFrame {
         for (int i = 0; i < x * y; i++) {
             int yIndex = (int) Math.floor(i /x);
             int xIndex = i % x;
-            System.out.println(yIndex + "" + xIndex);
             Tile button = Gameboard[yIndex][xIndex];
             button.setMargin(new Insets(0,0,0,0));
             button.addActionListener(e -> {
+
+                // when an empty tile is clicked on, reveal all adj. empty tiles
+                if (button.type == Tile.Type.EMPTY) {
+                    findAdjEmptyTiles(button);
+                }
                 button.buttonPressed();
-                button.setEnabled(false);
             });
-//            button.setBorder(null);
             panel.add(button);
         }
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,6 +91,43 @@ public class MyFrame extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+
+    private void findAdjEmptyTiles(Tile tile) {
+        // skip tile if already encountered
+        if (tile.revealed) {
+            return;
+        }
+
+        // if tile is mine or numtile
+        if (!(tile.type == Tile.Type.EMPTY)) {
+            // if tile is numtile, press (essentially reveal it)
+            if (tile.type == Tile.Type.NUMTILE) {
+                tile.buttonPressed();
+            }
+            return;
+        }
+
+        // reveal current tile
+        tile.buttonPressed();
+        int x = tile.location.x;
+        int y = tile.location.y;
+        int[] diffs = {-1, 0, 1};
+
+        // loop through adj tiles (8 compass directions
+        for (int diff1: diffs) {
+            for (int diff2: diffs) {
+                if (!(diff1 == 0 && diff2 == 0)) {
+                    try {
+                        // if adj tile is in a corner, only reveal if tile is numtile
+                        if ((Math.abs(diff1 + diff2) == 1 || (Gameboard[y + diff1][x + diff2].type != Tile.Type.EMPTY)))
+                        findAdjEmptyTiles(Gameboard[y + diff1][x + diff2]);
+                    }
+                    catch (ArrayIndexOutOfBoundsException e) {
+                    }
+                }
+            }
+        }
     }
 
 }
