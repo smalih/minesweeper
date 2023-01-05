@@ -1,19 +1,31 @@
 import java.awt.*;
 import javax.swing.*;
-import Tiles.*;
-public class MyFrame extends JFrame {
+import javax.swing.border.LineBorder;
 
-    MyPanel panel;
+import Tiles.*;
+public class MainGame extends JFrame {
+
+    MyPanel mainPanel;
+    MyPanel menuPanel;
+    int mines = 80;
 
     int x = 20;
     int y = 20;
-    GridLayout GameLayout = new GridLayout(x, y);
+    GridLayout GameLayout = new GridLayout(x, y, 0, 0);
     Tile[][] Gameboard = new Tile[y][x];
 
-    MyFrame() {
+    MainGame(String title) {
+        super(title);
+        setPreferredSize(new Dimension(500, 500));
+//        setResizable(false);
+
+        setBounds(100,100,645,470);
+        Container c = getContentPane();
+//        c.setLayout(new BorderLayout(8,6));
+//        this.getRootPane().setBorder(BorderFactory.createMatteBorder(4,4,4,4, Color.GREEN));
 
         // randomly place mines in grid
-        for (int i = 0; i < 80; i++) {
+        for (int i = 0; i < mines; i++) {
 
             int randx;
             int randy;
@@ -61,13 +73,12 @@ public class MyFrame extends JFrame {
         }
 //        this.setPreferredSize(new Dimension(500,500));
 
-        panel = new MyPanel();
-        panel.setLayout(GameLayout);
+        // mainPanel will hold the mine grid
+        mainPanel = new MyPanel();
+
+
         JButton b = new JButton();
-//        Dimension buttonSize = b.getPreferredSize();
-////        panel.setPreferredSize(new Dimension((int) (buttonSize.getWidth() * (int) (buttonSize.getHeight() * 3.5))));
-//        panel.setPreferredSize(new Dimension((int)(buttonSize.getWidth() * 2.5),
-//                (int)(buttonSize.getHeight() * 3.5) ));
+
         for (int i = 0; i < x * y; i++) {
             int yIndex = (int) Math.floor(i /x);
             int xIndex = i % x;
@@ -81,16 +92,58 @@ public class MyFrame extends JFrame {
                 }
                 button.buttonPressed();
             });
-            panel.add(button);
+            mainPanel.add(button);
         }
+
+//        mainPanel.setMaximumSize(new Dimension(500, 500));
+        MyPanel wrapperPanel = new MyPanel();
+        wrapperPanel.setLayout(new BorderLayout());
+        wrapperPanel.setPreferredSize(new Dimension(500, 500));
+//        mainPanel.setPreferredSize(new Dimension(500, 500));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        GameLayout.setHgap(0);
-        GameLayout.setVgap(0);
-        GameLayout.layoutContainer(panel);
-        this.add(panel);
-        this.pack();
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+
+
+////        wrapperPanel.setPreferredSize(new Dimension(500, 500));
+//        wrapperPanel.setMaximumSize(new Dimension(500, 500));
+
+
+//        c.setPreferredSize(new Dimension(500, 500));
+//        c.setMaximumSize(new Dimension(500, 500));
+
+
+        JButton button1 = new JButton("Button1");
+        JButton button2 = new JButton("Button2");
+        JButton button3 = new JButton("Button3");
+        JButton button4 = new JButton("Button4");
+        JButton button5 = new JButton("Button5");
+        JButton button6 = new JButton("Button6");
+        JButton button8 = new JButton("Button8");
+        JButton button9 = new JButton("Button9");
+        JButton button10 = new JButton("Button10");
+        JButton button11 = new JButton("Button11");
+
+
+        mainPanel.setLayout(GameLayout);
+
+
+
+        menuPanel = new MyPanel();
+        menuPanel.setPreferredSize(new Dimension(100, 100));
+        menuPanel.setBorder(new LineBorder(Color.BLACK));
+        menuPanel.setLayout(new GridBagLayout());
+        menuPanel.add(button1);
+        menuPanel.add(button2);
+        menuPanel.add(button3);
+        menuPanel.add(button4);
+        c.setPreferredSize(new Dimension(500, 500));
+
+
+        c.add(menuPanel, BorderLayout.NORTH);
+        c.add(mainPanel, BorderLayout.SOUTH);
+
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     private void findAdjEmptyTiles(Tile tile) {
@@ -131,3 +184,5 @@ public class MyFrame extends JFrame {
     }
 
 }
+
+
